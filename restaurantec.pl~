@@ -207,7 +207,6 @@ validaralimento(Y, X):-
     .
     %buscaralimentorest(X)
 
-%En caso de que el compa quiera comer comida rápida
 validaralimento(Y, X):-
     %Recibimos el alimento clave que quiere el compa
     %Buscar los restaurantes que tengan el alimento que el compa quiere
@@ -218,7 +217,7 @@ validaralimento(Y, X):-
     read(L),
     %Buscar si el tipo está en algún pizza
 
-    comidarapida(X,B), miembro(L, B),write(X), nl
+    pizza(X,B), miembro(L, B),write(X), nl
     .
 
 validarlugar(Y, K):-
