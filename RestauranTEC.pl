@@ -69,25 +69,29 @@ alimento(S0,S, Claves):-
 
 ubicacion(S0,S,S1):-
     preposicion(S0,S1),
-    lugar(S1,S).
+    lugares(_,S), !.
+
+ubicacion(S0,S,S0):-
+    lugares(_,S), !.
 
 %==================  CANTIDAD DE PERSONAS  ==================%
 
 personas(S0,S,S1):-
-    preposicion(S0,S1),
-    cantidad(S1,S2),
-    person(S2,S).
+    preposicion(S0,[S1|_]),
+    cantidad(_,S2),
+    person(S2,S), !.
 
 personas(S0,S,S1):-
     preposicion(S0,S1),
-    cantidad(S1,S).
+    cantidad(_,S), !.
 
 personas(S0,S,S0):-
-    cantidad(S0,S1),
-    person(S1,S).
+    cantidad(_,S1),
+    person(S1,S), !.
 
 personas(S0,S,S0):-
-    cantidad(S0,S).
+    cantidad(_,S), !.
+
 
 
 %=======================  SINTAGMAS =========================%
@@ -145,15 +149,11 @@ nombre(femenino, singular, solido, [comida|S],S).
 nombre(femenino, singular, liquido, [bebida|S],S).
 %nombre(masculino, singular, [menu|S],S).
 
-lugar([heredia|S],S).
-lugar([cartago|S],S).
-lugar([alajuela|S],S).
-lugar([limón|S],S).
+lugares([_|S],S).
 
 person([personas|S],S).
 
-cantidad([cuatro|S],S).
-cantidad([tres|S],S).
+cantidad([_|S],S).
 
 %=======================  VERBAL =========================%
 
