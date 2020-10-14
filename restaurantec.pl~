@@ -25,7 +25,7 @@ pizza("Italianisimo","Bella Italia").
 
 %=======================  Comida Rapida =========================%
 
-comidarapida("McBurguesa",["Hamburguesas", "Tacos ", "papas"]  ).
+comidarapida("McBurguesa",["Hamburguesas", "Tacos", "papas"]  ).
 %=======================  Direcciones =========================%
 
 direccion("Bella Italia","300m Sur de la entrada principal de la Universidad de Costa Rica" ).
@@ -50,7 +50,6 @@ capacidad("Bella Italia", 10).
 capacidad("talianisimo", 50).
 
 capacidad("McBurguesa", 20).
-
 
 %=======================  ALIMENTOS  =========================%
 
@@ -207,6 +206,7 @@ validaralimento(Y, X):-
     .
     %buscaralimentorest(X)
 
+%En caso de que el compa quiera comer comida rápida
 validaralimento(Y, X):-
     %Recibimos el alimento clave que quiere el compa
     %Buscar los restaurantes que tengan el alimento que el compa quiere
@@ -217,11 +217,14 @@ validaralimento(Y, X):-
     read(L),
     %Buscar si el tipo está en algún pizza
 
-    pizza(X,B), miembro(L, B),write(X), nl
+    comidarapida(X,B), miembro(L, B),write(X), nl
     .
 
-validarlugar(Y, K):-
+validarlugar(K, Y):-
     lugar(K, Y)
+    .
+validarcapacidad(K, Y):-
+    capacidad(K, T), T >= Y
     .
 
 %obtenerMenu(X):-
@@ -251,16 +254,16 @@ restaurantec():-
     ubicacion(Z,[],LugarClave),
     updatePreferences(Result0,LugarClave,Result1),
     write(LugarClave), nl,
-    validarlugar(LugarClave, K), % Aquí debería saber donde dar la recomendacion, sabiendo el restaurante y validando que ese restaurante esté en el lugar donde el compa me dijo
+    validarlugar(K, LugarClave), % Aquí debería saber donde dar la recomendacion, sabiendo el restaurante y validando que ese restaurante esté en el lugar donde el compa me dijo
     write("para cuántas personas?"), nl,
     read(A),
     getInput(A,B),
     personas(B,[],PersonasClave),
     updatePreferences(Result1,PersonasClave,Result2),
     write(PersonasClave), nl,
+    validarcapacidad(K, PersonasClave),
     write(Result2),nl,
     write("ok"), nl.
-["San Pedro"]
 
 %==================  TUTORIAL  ====================%
 
