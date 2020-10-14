@@ -46,7 +46,7 @@ lugar("McBurguesa", "Cartago").
 
 capacidad("Bella Italia", 10).
 
-capacidad("Italianisimo", 50).
+capacidad("Italianisimo", 5).
 
 capacidad("McBurguesa", 20).
 
@@ -285,17 +285,19 @@ restaurantec():-
     write("dónde?"), nl,
     read(W),
     getInput(W,Z),
-    ubicacion(Z,[],LugarClave),
+    ubicacion(Z,[],[LugarClave|_]), %Con la cabeza tampoco
     updatePreferences(Result0,LugarClave,Result1),
     write(LugarClave), nl,
-    validarlugar(K, LugarClave), % Aquí debería saber donde dar la recomendacion, sabiendo el restaurante y validando que ese restaurante esté en el lugar donde el compa me dijo
+    atom_string(LugarClave, P),
+    validarlugar(K, P), % Aquí debería saber donde dar la recomendacion, sabiendo el restaurante y validando que ese restaurante esté en el lugar donde el compa me dijo
     write("para cuántas personas?"), nl,
     read(A),
     getInput(A,B),
-    personas(B,[],PersonasClave),
+    personas(B,[],[PersonasClave|_]),
     updatePreferences(Result1,PersonasClave,Result2),
     write(PersonasClave), nl,
-    validarcapacidad(K, PersonasClave),
+    atom_number(PersonasClave, V),
+    validarcapacidad(K, V),
     write(Result2),nl,
     direccion(K,S),
     atom_concat("Nuestra sugerencia es: Restaurante ", K, O1),

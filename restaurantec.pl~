@@ -46,7 +46,7 @@ lugar("McBurguesa", "Cartago").
 
 capacidad("Bella Italia", 10).
 
-capacidad("Italianisimo", 50).
+capacidad("Italianisimo", 5).
 
 capacidad("McBurguesa", 20).
 
@@ -77,20 +77,21 @@ ubicacion(S0,S,S0):-
 %==================  CANTIDAD DE PERSONAS  ==================%
 
 personas(S0,S,S1):-
-    preposicion(S0,S1),
-    cantidad(S1,S2),
-    person(S2,S).
+    preposicion(S0,[S1|_]),
+    cantidad(_,S2),
+    person(S2,S), !.
 
 personas(S0,S,S1):-
     preposicion(S0,S1),
-    cantidad(S1,S).
+    cantidad(_,S), !.
 
 personas(S0,S,S0):-
-    cantidad(S0,S1),
-    person(S1,S).
+    cantidad(_,S1),
+    person(S1,S), !.
 
 personas(S0,S,S0):-
-    cantidad(S0,S).
+    cantidad(_,S), !.
+
 
 
 %=======================  SINTAGMAS =========================%
@@ -148,15 +149,11 @@ nombre(femenino, singular, solido, [comida|S],S).
 nombre(femenino, singular, liquido, [bebida|S],S).
 %nombre(masculino, singular, [menu|S],S).
 
-lugares([guanacaste|S],S).
-lugares([puntarenas|S],S).
-lugares([limón|S],S).
-
+lugares([_|S],S).
 
 person([personas|S],S).
 
-cantidad([cuatro|S],S).
-cantidad([tres|S],S).
+cantidad([_|S],S).
 
 %=======================  VERBAL =========================%
 
@@ -288,14 +285,15 @@ restaurantec():-
     write("dónde?"), nl,
     read(W),
     getInput(W,Z),
-    ubicacion(Z,[],LugarClave),
+    ubicacion(Z,[],[LugarClave|_]), %Con la cabeza tampoco
     updatePreferences(Result0,LugarClave,Result1),
     write(LugarClave), nl,
-    validarlugar(K, LugarClave), % Aquí debería saber donde dar la recomendacion, sabiendo el restaurante y validando que ese restaurante esté en el lugar donde el compa me dijo
+    atom_string(LugarClave, P),
+    validarlugar(K, P), % Aquí debería saber donde dar la recomendacion, sabiendo el restaurante y validando que ese restaurante esté en el lugar donde el compa me dijo
     write("para cuántas personas?"), nl,
     read(A),
     getInput(A,B),
-    personas(B,[],PersonasClave),
+    personas(B,[],[PersonasClave|_]),
     updatePreferences(Result1,PersonasClave,Result2),
     write(PersonasClave), nl,
     validarcapacidad(K, PersonasClave),
