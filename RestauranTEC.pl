@@ -44,7 +44,7 @@ comidarapida("McBurguesa",["Hamburguesas", "Tacos", "papas"]  ).
 
 % direccion("Nombre del restaurante", "Dirección").
 
-direccion("Bella Italia","300m Sur de la entrada principal de la Universidad de Costa Rica" ).
+direccion("Bella Italia","300m Sur de la entrada principal de la Universidad Nacional" ).
 
 direccion("Italianisimo", "50m Sur de la entrada Banco de Costa Rica" ).
 
@@ -203,10 +203,8 @@ parseInput([C|InputList], [A|Result]):-
 
 getInput(Input,R):-
     split_string(Input," ",".",R1),
-    %write(R),
     parseInput(R1,R).
 
-updatePreferences(Pref,Insert,[Insert|Pref]).
 
 %======================  DELIMITANTES ========================%
 
@@ -228,14 +226,12 @@ miembro(X, [_|R]):-miembro(X,R).
 % Salidas: restaurante a recomendar.
 
 validaralimento(Y, X):-
-
-    write(Y),
     Y == [pizza],
     write("Algun tipo de pizza especial?"),nl,
     read(L),
 
     %Ver si el tipo de comida que escribe coincide con la lista de pizzas de algún    %restaurante
-    pizza(X,B), miembro(L, B),write(X), nl
+    pizza(X,B), miembro(L, B), nl
 
     .
 
@@ -252,14 +248,12 @@ validaralimento(Y, X):-
 % retorne.
 
 validaralimento(Y, X):-
-
-    write(Y),
     miembro(rápida, Y),
     write("Qué tipo de comida rápida?"),nl,
     read(L),
 
     %Ver si el tipo de comida que escribe coincide con la lista de comida rápida
-    comidarapida(X,B), miembro(L, B),write(X), nl
+    comidarapida(X,B), miembro(L, B), nl
     .
 
 % Valida si el lugar indicado por el usuario coincide con donde se
@@ -301,51 +295,65 @@ validarcapacidad(K, Y):-
 
 restaurantec():-
     write("¡Hola! ¿Qué desea comer hoy? Escriba su preferencia entre comillas por favor."), nl,
-    read(X),
-    getInput(X,Y),
-    write(Y),
-    alimento(Y,[],AlimentoClave),
-    updatePreferences([],AlimentoClave,Result0),
-    validaralimento(AlimentoClave, K), % Aquí sé cual restaurante es el candidato
-    write(K), nl,
-    write("dónde?"), nl,
-    read(W),
-    getInput(W,Z),
-    ubicacion(Z,[],[LugarClave|_]), %Con la cabeza tampoco
-    updatePreferences(Result0,LugarClave,Result1),
-    write(LugarClave), nl,
+
+    read(InputAlimento),
+    % InputAlimento es el input de usuario de preferencia de alimento
+    % InputAlimentoParseado es el input para poder analizarse
+    getInput(InputAlimento,InputAlimentoParseado),
+
+    % AlimentoClave es la palabra clave de la frase del alimento
+    alimento(InputAlimentoParseado,[],AlimentoClave),
+
+    %K será el restaurante candidato
+    validaralimento(AlimentoClave, K),
+
+    %
+    write("Dónde se te antoja comer?"), nl,
+
+    read(InputLugar),
+
+    % InputLugar es el input de usuario de preferencia de lugar
+    % InputLugarParseado es el input para poder analizarse
+    getInput(InputLugar,InputLugarParseado),
+
+    % LugarClave es la palabra clave de la frase del lugar
+    ubicacion(InputLugarParseado,[],[LugarClave|_]),
+
+    %P será el lugar clave como string
     atom_string(LugarClave, P),
-    validarlugar(K, P), % Aquí debería saber donde dar la recomendacion, sabiendo el restaurante y validando que ese restaurante esté en el lugar donde el compa me dijo
-    write("para cuántas personas?"), nl,
-    read(A),
-    getInput(A,B),
-    personas(B,[],[PersonasClave|_]),
-    updatePreferences(Result1,PersonasClave,Result2),
-    write(PersonasClave), nl,
+
+    validarlugar(K, P),
+    write("Para cuántas personas sería la reservación?"), nl,
+    read(InputPersonas),
+
+    %InputPersonas es el input de usuario de cantidad de personas
+    % InputPersonasParseado es el input para poder analizarse
+
+    getInput(InputPersonas,InputPersonasParseado),
+
+    % PersonasClave es la palabra clave de la frase de la capacidad
+    personas(InputPersonasParseado,[],[PersonasClave|_]),
+
+    % V será la cantidad de personas clave como número para ser comparado con la capacidad del restaurante
     atom_number(PersonasClave, V),
+
     validarcapacidad(K, V),
-    write(Result2),nl,
+
+    %K es el nombre del restaurante y S su dirección
     direccion(K,S),
+
     atom_concat("Nuestra sugerencia es: Restaurante ", K, O1),
     atom_concat(O1, " que se ubica ", O2),
     atom_concat(O2, S, O3),
+
+    %O3 es la frase completa de la recomendación
     write(O3), nl,
     write("Su reservación ha sido tramitada"),
+
+    %D son las disposiciones de los restaurantes
     disposiciones(D),
     write(D),nl,
-    write("ok").
 
-%==================  TUTORIAL  ====================%
-
-
-%Todo lo que se escriba entre comillas y en minúscula todo.
-%
-%Para saber frases de alimentos válidas:
-%alimento(S,[],R).
-%
-%Para saber frases de ubicaciones válidas:
-%ubicacion(S,[],R).
-%
-%Para saber frases de cantidad de personas válidas:
-%personas(S,[],R).
+    %Se llama recursivamente por si el usuario quiere volver a consultar
+    restaurantec().
 
