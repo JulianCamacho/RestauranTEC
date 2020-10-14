@@ -31,7 +31,7 @@ direccion("Bella Italia","300m Sur de la entrada principal de la Universidad de 
 
 direccion("Italianisimo", "50m Sur de la entrada Banco de Costa Rica" ).
 
-direccion("Bella Italia","100m Norte de la entrada principal del TEC" ).
+direccion("McBurguesa","100m Norte de la entrada principal del TEC" ).
 
 
 %=======================  Lugares  =========================%
@@ -296,7 +296,8 @@ restaurantec():-
     personas(B,[],[PersonasClave|_]),
     updatePreferences(Result1,PersonasClave,Result2),
     write(PersonasClave), nl,
-    validarcapacidad(K, PersonasClave),
+    atom_number(PersonasClave, V),
+    validarcapacidad(K, V),
     write(Result2),nl,
     direccion(K,S),
     atom_concat("Nuestra sugerencia es: Restaurante ", K, O1),

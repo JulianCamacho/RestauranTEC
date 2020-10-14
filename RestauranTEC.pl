@@ -1,12 +1,16 @@
 %=======================  Restaurantes  =========================%
 
+%restaurante("Nombre del restaurante").
 restaurante("Bella Italia").
 restaurante("Italianisimo").
 restaurante("McBurguesa").
 
 disposiciones( "Recuerde: Que por disposiciones de Danielito Salas solo se permiten burbujas y durante la espera se debe utilizar mascarilla").
 
+
 %=======================  Menús  =========================%
+
+%mennu("Nombre", "Tipo de menú", "[Comida |[Tipos específicos]]").
 
 mennu("Bella Italia", "Italiano", ["Pizza", ["Jamón y Queso", "Suprema", "Hawaiana"], "Calzone", "Espagueti"]).
 
@@ -14,35 +18,54 @@ mennu("Italianisimo","Italiano" ,["Pizza", ["Pepperoni"], "Calzone", "Espagueti"
 
 mennu("McBurguesa","Comida Rapida" ,["Hamburguesas", "Tacos ", "papas"] ).
 
+
+
 %=======================  Pizzas =========================%
 
+%pizza("Nombre del restaurante", "[Tipos específicos]").
 pizza("Bella Italia", ["Jamón y Queso", "Suprema", "Hawaiana"]).
 
 pizza("Italianisimo", ["Pepperoni"]).
 
+%pizza("Restaurante 1", "Restaurante 2").
 pizza("Italianisimo","Bella Italia").
+
+
 
 %=======================  Comida Rapida =========================%
 
+%comidarapida("Nombre del restaurante", "[Tipos específicos]").
+
 comidarapida("McBurguesa",["Hamburguesas", "Tacos", "papas"]  ).
+
+
+
 %=======================  Direcciones =========================%
+
+% direccion("Nombre del restaurante", "Dirección").
 
 direccion("Bella Italia","300m Sur de la entrada principal de la Universidad de Costa Rica" ).
 
 direccion("Italianisimo", "50m Sur de la entrada Banco de Costa Rica" ).
 
-direccion("Bella Italia","100m Norte de la entrada principal del TEC" ).
+direccion("McBurguesa","100m Norte de la entrada principal del TEC" ).
+
 
 
 %=======================  Lugares  =========================%
 
-lugar("Bella Italia", "San Pedro").
+% lugar("Nombre del restaurante", "Lugar donde se ubica").
+
+lugar("Bella Italia", "Heredia").
 
 lugar("Italianisimo", "Alajuela").
 
 lugar("McBurguesa", "Cartago").
 
+
 %=======================  Capacidad  =========================%
+
+% capacidad("Nombre del restaurante", Capacidad máxima).
 
 capacidad("Bella Italia", 10).
 
@@ -50,7 +73,10 @@ capacidad("Italianisimo", 5).
 
 capacidad("McBurguesa", 20).
 
+
+
 %=======================  ALIMENTOS  =========================%
+
 
 alimento(S0,S,Claves):-
     pronombre(Num,S0,S1),
@@ -184,7 +210,7 @@ updatePreferences(Pref,Insert,[Insert|Pref]).
 
 %======================  DELIMITANTES ========================%
 
-% Función que revisa si un elemento pertenece a una lista
+% Revisa si un elemento pertenece a una lista
 % Sintaxis: miembro(elemento, lista).
 % Entradas: elemento, lista.
 % Salidas: Booleano indicando si el elemento pertenece a la lista o no
