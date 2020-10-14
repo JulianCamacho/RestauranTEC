@@ -20,6 +20,7 @@ mennu("McBurguesa","Comida Rapida" ,["Hamburguesas", "Tacos ", "papas"] ).
 
 
 
+
 %=======================  Pizzas =========================%
 
 %pizza("Nombre del restaurante", "[Tipos específicos]").
@@ -81,15 +82,21 @@ capacidad("McBurguesa", 20).
 alimento(S0,S,Claves):-
     pronombre(Num,S0,S1),
     sintagma_verbal(Num,Estado,S1,S2),
-    sintagma_nominal(_Gen2,Num,Estado,S2,S, Claves).
+    sintagma_nominal(_Gen2,Num,Estado,S2,S, Claves), !.
                   %Género, número, estado del nombre
 
 alimento(S0,S, Claves):-
     sintagma_verbal(Num,Estado,S0,S1),
-    sintagma_nominal(_Gen2,Num,Estado,S1,S, Claves).
+    sintagma_nominal(_Gen2,Num,Estado,S1,S, Claves), !.
 
 alimento(S0,S, Claves):-
-    sintagma_nominal(_Gen2,Num,Estado,S0,S, Claves).
+    sintagma_nominal(_Gen2,Num,Estado,S0,S, Claves), !.
+
+alimento(_S0,_S,_Claves):-
+    write("Lo sentimos, no se conoce algún restaurante con ese tipo de comida"),
+    nl, nl,
+    restaurantec().
+
 
 %======================  UBICACIONES  =======================%
 
@@ -99,6 +106,7 @@ ubicacion(S0,S,S1):-
 
 ubicacion(S0,S,S0):-
     lugares(_,S), !.
+
 
 %==================  CANTIDAD DE PERSONAS  ==================%
 
@@ -117,7 +125,6 @@ personas(S0,S,S0):-
 
 personas(S0,S,S0):-
     cantidad(_,S), !.
-
 
 
 %=======================  SINTAGMAS =========================%
@@ -143,37 +150,23 @@ sintagma_verbal(Num,_Estado,S0,S):-verbo(Num,S0,S).
 sintagma_verbal(Num,Estado,S0,S):-
     verbo(Num,S0,S1),
     infinitivo(Estado,S1,S).
-%   sintagma_nominal(_Gen2,Num,S2,S).
-
-%sintagma_verbal(Num,S0,S):-
-%    verbo(Num,S0,S1),
-%    sintagma_nominal(_Gen2,Num,S1,S).
-
 
 %=======================  NOMINAL =========================%
 
-%determinante(femenino, singular, [la|S],S).
 determinante(femenino, singular, [una|S],S).
-%determinante(femenino, plural, [las|S],S).
-%determinante(femenino, plural, [unas|S],S).
-%determinante(masculino, singular, [el|S],S).
+determinante(femenino, plural, [unas|S],S).
 determinante(masculino, singular, [un|S],S).
-%determinante(masculino, plural, [los|S],S).
-%determinante(masculino, plural, [unos|S],S).
+determinante(masculino, plural, [unos|S],S).
 
 pronombre(singular,[yo|S],S).
 
-%pregunta(singular,[qué|S],S).
-%pregunta(singular,[dónde|S],S).
-%pregunta(singular,[cuál|S],S).
-
 adjetivo(femenino,singular,[rápida|S],S).
 
-nombre(masculino, singular, solido, [pollo|S],S).
+nombre(masculino, singular, solido, [calzone|S],S).
+nombre(masculino, singular, solido, [espagueti|S],S).
 nombre(femenino, singular, solido, [pizza|S],S).
 nombre(femenino, singular, solido, [comida|S],S).
 nombre(femenino, singular, liquido, [bebida|S],S).
-%nombre(masculino, singular, [menu|S],S).
 
 lugares([_|S],S).
 
@@ -231,8 +224,7 @@ validaralimento(Y, X):-
     read(L),
 
     %Ver si el tipo de comida que escribe coincide con la lista de pizzas de algún    %restaurante
-    pizza(X,B), miembro(L, B), nl
-
+    pizza(X,B), miembro(L, B), nl, !
     .
 
 % En caso de que el compa quiera comer comida rápida, recomienda el
@@ -253,8 +245,13 @@ validaralimento(Y, X):-
     read(L),
 
     %Ver si el tipo de comida que escribe coincide con la lista de comida rápida
-    comidarapida(X,B), miembro(L, B), nl
+    comidarapida(X,B), miembro(L, B), nl, !
     .
+
+validaralimento(_K,_Y):-
+    write("Lo sentimos, no se conoce algún restaurante con ese tipo específico de alimentación"), nl, nl,
+    restaurantec().
+
 
 % Valida si el lugar indicado por el usuario coincide con donde se
 % encuentra el restaurante a recomendar. Retorna true si coinciden, sino
@@ -267,8 +264,12 @@ validaralimento(Y, X):-
 % Restricciones: Se deben dar los dos argumentos para que funcione.
 
 validarlugar(K, Y):-
-    lugar(K, Y)
-    .
+    lugar(K, Y), !.
+
+
+validarlugar(_K,_Y):-
+    write("Lo sentimos, no se conoce algún restaurante con sus preferencias en ese lugar"), nl, nl,
+    restaurantec().
 
 % Valida si la capacidad solicitada por el usuario es menor o igual a la
 % disponible en el restaurante.
@@ -281,8 +282,12 @@ validarlugar(K, Y):-
 % Restricciones: Se deben dar los dos argumentos para que funcione
 
 validarcapacidad(K, Y):-
-    capacidad(K, T), T >= Y
+    capacidad(K, T), T >= Y, !
     .
+
+validarcapacidad(_K,_Y):-
+    write("Lo sentimos, no se conoce algún restaurante con sus preferencias con esa capacidad"), nl, nl,
+    restaurantec().
 
 
 
@@ -308,7 +313,7 @@ restaurantec():-
     validaralimento(AlimentoClave, K),
 
     %
-    write("Dónde se te antoja comer?"), nl,
+    write("¿Dónde se te antoja comer?"), nl,
 
     read(InputLugar),
 
@@ -323,7 +328,7 @@ restaurantec():-
     atom_string(LugarClave, P),
 
     validarlugar(K, P),
-    write("Para cuántas personas sería la reservación?"), nl,
+    write("¿Para cuántas personas sería la reservación?"), nl,
     read(InputPersonas),
 
     %InputPersonas es el input de usuario de cantidad de personas
@@ -348,11 +353,11 @@ restaurantec():-
 
     %O3 es la frase completa de la recomendación
     write(O3), nl,
-    write("Su reservación ha sido tramitada"),
+    write("Su reservación ha sido tramitada."),
 
     %D son las disposiciones de los restaurantes
     disposiciones(D),
-    write(D),nl,
+    write(D),nl, nl,
 
     %Se llama recursivamente por si el usuario quiere volver a consultar
     restaurantec().
