@@ -5,8 +5,11 @@ restaurante("Bella Italia").
 restaurante("Italianisimo").
 restaurante("McBurguesa").
 
-disposiciones( "Recuerde: Que por disposiciones de Danielito Salas solo se permiten burbujas y durante la espera se debe utilizar mascarilla").
+%=======================  Disposiciones  =========================%
 
+disposiciones("Bella Italia",  "Solo se permiten burbujas y durante la espera se debe utilizar mascarilla").
+disposiciones("Italianisimo", "Utilizar mascarilla").
+disposiciones("McBurguesa", "Solo se permiten burbujas").
 
 %=======================  Menús  =========================%
 
@@ -162,7 +165,8 @@ pronombre(singular,[yo|S],S).
 
 adjetivo(femenino,singular,[rápida|S],S).
 
-nombre(masculino, singular, solido, [pollo|S],S).
+nombre(masculino, singular, solido, [calzone|S],S).
+nombre(masculino, singular, solido, [espagueti|S],S).
 nombre(femenino, singular, solido, [pizza|S],S).
 nombre(femenino, singular, solido, [comida|S],S).
 nombre(femenino, singular, liquido, [bebida|S],S).
@@ -353,9 +357,10 @@ restaurantec():-
     %O3 es la frase completa de la recomendación
     write(O3), nl,
     write("Su reservación ha sido tramitada."),
+    write(K),
 
     %D son las disposiciones de los restaurantes
-    disposiciones(D),
+    disposiciones(K, D),
     write(D),nl, nl,
 
     %Se llama recursivamente por si el usuario quiere volver a consultar
