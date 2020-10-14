@@ -4,8 +4,7 @@ restaurante("Bella Italia").
 restaurante("Italianisimo").
 restaurante("McBurguesa").
 
-disposiciones( "Solo se permiten burbujas y durante la espera se debe utilizar
-mascarilla").
+disposiciones( "Recuerde: Que por disposiciones de Danielito Salas solo se permiten burbujas y durante la espera se debe utilizar mascarilla").
 
 %=======================  Menús  =========================%
 
@@ -183,61 +182,96 @@ getInput(Input,R):-
 
 updatePreferences(Pref,Insert,[Insert|Pref]).
 
+%======================  DELIMITANTES ========================%
 
-%======================  PRINCIPAL  ========================%
+% Función que revisa si un elemento pertenece a una lista
+% Sintaxis: miembro(elemento, lista).
+% Entradas: elemento, lista.
+% Salidas: Booleano indicando si el elemento pertenece a la lista o no
 
 miembro(X, [X|_]).
 miembro(X, [_|R]):-miembro(X,R).
 
-%Caso en que el compa quiera comer pizza
+% Consideración si el usuario quiere comer pizza, devuelve el
+% restaurante a recomendar.
+% Sintaxis:
+% validaralimento(listaPalabrasClave, restaurante). Se utiliza:
+% validaralimento(listaPalabrasClave, X) donde X es el restaurante
+% candidato a recomendar al usuario
+% Entradas: listaPalabrasClave, restaurante
+% Salidas: restaurante a recomendar.
+
 validaralimento(Y, X):-
-    %Recibimos el alimento clave que quiere el compa
-    %Buscar los restaurantes que tengan el alimento que el compa quiere
-    %Retornar una lista con los posibles candidatos
+
     write(Y),
     Y == [pizza],
     write("Algun tipo de pizza especial?"),nl,
     read(L),
-    %Buscar si el tipo está en algún pizza
 
+    %Ver si el tipo de comida que escribe coincide con la lista de pizzas de algún    %restaurante
     pizza(X,B), miembro(L, B),write(X), nl
 
-    %write(Z)
     .
-    %buscaralimentorest(X)
 
-%En caso de que el compa quiera comer comida rápida
+% En caso de que el compa quiera comer comida rápida, recomienda el
+% restaurante para ello y valida si el tipo de comida es válido para
+% dicho restaurante.
+% Sintaxis:
+% validaralimento(listaPalabrasClave, restaurante). Se utiliza:
+% validaralimento(listaPalabrasClave, X) donde X es el restaurante
+% candidato a recomendar al usuario
+% Entradas: listaPalabrasClave, restaurante
+% Salidas: restaurante a recomendar.
+% Restricciones: Se debe dar la Y y dejar al X como variable para que se
+% retorne.
+
 validaralimento(Y, X):-
-    %Recibimos el alimento clave que quiere el compa
-    %Buscar los restaurantes que tengan el alimento que el compa quiere
-    %Retornar una lista con los posibles candidatos
+
     write(Y),
     miembro(rápida, Y),
     write("Qué tipo de comida rápida?"),nl,
     read(L),
-    %Buscar si el tipo está en algún pizza
 
+    %Ver si el tipo de comida que escribe coincide con la lista de comida rápida
     comidarapida(X,B), miembro(L, B),write(X), nl
     .
+
+% Valida si el lugar indicado por el usuario coincide con donde se
+% encuentra el restaurante a recomendar. Retorna true si coinciden, sino
+% false.
+% Sintaxis: validarlugar(restaurante, lugar). Se utiliza como:
+% validarlugar(rest, lugar), dando los dos argumentos para que retorne
+% un booleano.
+% Entrada: restaurante, lugar.
+% Salida: Booleano indicando si el restaurante y lugar coinciden
+% Restricciones: Se deben dar los dos argumentos para que funcione.
 
 validarlugar(K, Y):-
     lugar(K, Y)
     .
+
+% Valida si la capacidad solicitada por el usuario es menor o igual a la
+% disponible en el restaurante.
+% Sintaxis: validarcapacidad(rest, capacidad).
+% Se utiliza como: validarcapacidad(rest, capacidad), dando los dos
+% argumentos para que retorne un booleano.
+% Entrada: restaurante, capacidad -> dada por el usuario
+% Salida: Booleano indicando si la capacidad solicitada se satisface o
+% no.
+% Restricciones: Se deben dar los dos argumentos para que funcione
+
 validarcapacidad(K, Y):-
     capacidad(K, T), T >= Y
     .
 
-%obtenerMenu(X):-
-    %restaurante([_|[X|_]]).
 
 
-%revisarlugar(Y):-
-    %Recibimos el alimento clave que quiere el compa
-    %Buscar los restaurantes que tengan el lugar que el compa quiere
-    %Retornar una lista con los posibles candidatos
-    %write(Y)
-    %.
-
+%======================  PRINCIPAL  ========================%
+% Función principal que hace las preguntas al usuario además de ser
+% utilizada como interfaz.
+% Entradas: Ninguna.
+% Salidas: Ninguna.
+% Restricciones: Contempladas en las validaciones
 
 restaurantec():-
     write("¡Hola! ¿Qué desea comer hoy? Escriba su preferencia entre comillas por favor."), nl,
@@ -263,7 +297,15 @@ restaurantec():-
     write(PersonasClave), nl,
     validarcapacidad(K, PersonasClave),
     write(Result2),nl,
-    write("ok"), nl.
+    direccion(K,S),
+    atom_concat("Nuestra sugerencia es: Restaurante ", K, O1),
+    atom_concat(O1, " que se ubica ", O2),
+    atom_concat(O2, S, O3),
+    write(O3), nl,
+    write("Su reservación ha sido tramitada"),
+    disposiciones(D),
+    write(D),nl,
+    write("ok").
 
 %==================  TUTORIAL  ====================%
 

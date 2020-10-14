@@ -4,8 +4,7 @@ restaurante("Bella Italia").
 restaurante("Italianisimo").
 restaurante("McBurguesa").
 
-disposiciones( "Solo se permiten burbujas y durante la espera se debe utilizar
-mascarilla").
+disposiciones( "Recuerde: Que por disposiciones de Danielito Salas solo se permiten burbujas y durante la espera se debe utilizar mascarilla").
 
 %=======================  Menús  =========================%
 
@@ -47,7 +46,7 @@ lugar("McBurguesa", "Cartago").
 
 capacidad("Bella Italia", 10).
 
-capacidad("talianisimo", 50).
+capacidad("Italianisimo", 50).
 
 capacidad("McBurguesa", 20).
 
@@ -263,7 +262,15 @@ restaurantec():-
     write(PersonasClave), nl,
     validarcapacidad(K, PersonasClave),
     write(Result2),nl,
-    write("ok"), nl.
+    direccion(K,S),
+    atom_concat("Nuestra sugerencia es: Restaurante ", K, O1),
+    atom_concat(O1, " que se ubica ", O2),
+    atom_concat(O2, S, O3),
+    write(O3), nl,
+    write("Su reservación ha sido tramitada"),
+    disposiciones(D),
+    write(D),nl,
+    write("ok").
 
 %==================  TUTORIAL  ====================%
 
