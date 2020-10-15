@@ -15,11 +15,11 @@ disposiciones("McBurguesa", "Solo se permiten burbujas").
 
 %mennu("Nombre", "Tipo de menú", "[Comida |[Tipos específicos]]").
 
-mennu("Bella Italia", "Italiano", ["Pizza", ["Jamón y Queso", "Suprema", "Hawaiana"], "Calzone", "Espagueti"]).
+mennu("Bella Italia", "italiano", ["Pizza", ["jamón y queso", "suprema", "hawaiana"], "calzone", "espagueti"]).
 
-mennu("Italianisimo","Italiano" ,["Pizza", ["Pepperoni"], "Calzone", "Espagueti"] ).
+mennu("Italianisimo","italiano" ,["Pizza", ["pepperoni"], "calzone", "espagueti"] ).
 
-mennu("McBurguesa","Comida Rapida" ,["Hamburguesas", "Tacos ", "papas"] ).
+mennu("McBurguesa","Comida Rapida" ,["hamburguesas", "tacos ", "papas"] ).
 
 
 
@@ -27,9 +27,9 @@ mennu("McBurguesa","Comida Rapida" ,["Hamburguesas", "Tacos ", "papas"] ).
 %=======================  Pizzas =========================%
 
 %pizza("Nombre del restaurante", "[Tipos específicos]").
-pizza("Bella Italia", ["Jamón y Queso", "Suprema", "Hawaiana"]).
+pizza("Bella Italia", ["jamón y queso", "suprema", "hawaiana"]).
 
-pizza("Italianisimo", ["Pepperoni"]).
+pizza("Italianisimo", ["pepperoni"]).
 
 %pizza("Restaurante 1", "Restaurante 2").
 pizza("Italianisimo","Bella Italia").
@@ -40,7 +40,7 @@ pizza("Italianisimo","Bella Italia").
 
 %comidarapida("Nombre del restaurante", "[Tipos específicos]").
 
-comidarapida("McBurguesa",["Hamburguesas", "Tacos", "papas"]  ).
+comidarapida("McBurguesa",["hamburguesas", "tacos", "papas"]  ).
 
 
 
@@ -165,9 +165,13 @@ pronombre(singular,[yo|S],S).
 
 adjetivo(femenino,singular,[rápida|S],S).
 
+nombre(masculino, singular, solido, [italiano|S],S).
+nombre(masculino, singular, solido, [tacos|S],S).
 nombre(masculino, singular, solido, [calzone|S],S).
 nombre(masculino, singular, solido, [espagueti|S],S).
 nombre(femenino, singular, solido, [pizza|S],S).
+nombre(femenino, plural, solido, [papas|S],S).
+nombre(femenino, plural, solido, [hamburguesas|S],S).
 nombre(femenino, singular, solido, [comida|S],S).
 nombre(femenino, singular, liquido, [bebida|S],S).
 
@@ -181,6 +185,7 @@ cantidad([_|S],S).
 
 
 verbo(singular,[quiero|S],S).
+verbo(singular,[deseo|S],S).
 infinitivo(solido, [comer|S],S).
 infinitivo(liquido, [tomar|S],S).
 
@@ -191,12 +196,16 @@ preposicion([para|S],S).
 
 %=====================  PARSEAR INPUT =======================%
 
-
+%Caso base
 parseInput([],[]).
+
+%Se hace una lista de las palabras ingresadas por el usuario como átomos
 parseInput([C|InputList], [A|Result]):-
     atom_string(A,C),
     parseInput(InputList,Result).
 
+%Input es la entrada de texto del usuario
+%R será la entrada en formato analizable
 getInput(Input,R):-
     split_string(Input," ",".",R1),
     parseInput(R1,R).
@@ -221,9 +230,33 @@ miembro(X, [_|R]):-miembro(X,R).
 % Entradas: listaPalabrasClave, restaurante
 % Salidas: restaurante a recomendar.
 
+%Validar tipo de menú italiano
+validaralimento(Y, X):-
+    %Ver si el tipo de comida que escribe coincide con el menú de algún restaurante
+    Y == [italiano],
+    %P será el lugar clave como string
+    write("¿Qué tipo de comida Italiana quiere comer"), nl,
+    read(T),
+    getInput(T,Tparsed),
+
+    % AlimentoClave es la palabra clave de la frase del alimento
+    alimento(Tparsed,[],AlimentoClave),
+    validaralimento(AlimentoClave,X),!
+    .
+
+
+%Validar otros tipos de comida italiana
+validaralimento([Y|_], X):-
+    %Ver si el tipo de comida que escribe coincide con el menú de algún restaurante
+    %P será el lugar clave como string
+    atom_string(Y, P),
+    mennu(X,_,B), miembro(P, B), nl, !
+    .
+
+
 validaralimento(Y, X):-
     Y == [pizza],
-    write("Algun tipo de pizza especial?"),nl,
+    write("Algún tipo de pizza especial?"),nl,
     read(L),
 
     %Ver si el tipo de comida que escribe coincide con la lista de pizzas de algún    %restaurante
@@ -302,7 +335,7 @@ validarcapacidad(_K,_Y):-
 % Restricciones: Contempladas en las validaciones
 
 restaurantec():-
-    write("¡Hola! ¿Qué desea comer hoy? Escriba su preferencia entre comillas por favor."), nl,
+    write("¡Hola! ¿Qué desea comer hoy? Escriba su preferencia entre comillas, todo en minúscula, excepto los nombres propios, y con punto final por favor."), nl,
 
     read(InputAlimento),
     % InputAlimento es el input de usuario de preferencia de alimento
@@ -356,9 +389,7 @@ restaurantec():-
 
     %O3 es la frase completa de la recomendación
     write(O3), nl,
-    write("Su reservación ha sido tramitada."),
-    write(K),
-
+    write("Su reservación ha sido tramitada."), nl,
     %D son las disposiciones de los restaurantes
     disposiciones(K, D),
     write(D),nl, nl,
