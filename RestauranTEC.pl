@@ -1,3 +1,4 @@
+
 %=======================  Restaurantes  =========================%
 
 %restaurante("Nombre del restaurante").
@@ -5,11 +6,14 @@ restaurante("Bella Italia").
 restaurante("Italianisimo").
 restaurante("McBurguesa").
 
+
 %=======================  Disposiciones  =========================%
 
+%disposiciones("Restaurante", "Disposición").
 disposiciones("Bella Italia",  "Solo se permiten burbujas y durante la espera se debe utilizar mascarilla").
 disposiciones("Italianisimo", "Utilizar mascarilla").
 disposiciones("McBurguesa", "Solo se permiten burbujas").
+
 
 %=======================  Menús  =========================%
 
@@ -78,9 +82,10 @@ capacidad("Italianisimo", 5).
 capacidad("McBurguesa", 20).
 
 
-
 %=======================  ALIMENTOS  =========================%
 
+
+%alimento(Oración, Oración preliminar, Palabra(s) clave).
 
 alimento(S0,S,Claves):-
     pronombre(Num,S0,S1),
@@ -103,6 +108,8 @@ alimento(_S0,_S,_Claves):-
 
 %======================  UBICACIONES  =======================%
 
+% ubicación(Oración, Oración preliminar, Palabra(s) clave).
+
 ubicacion(S0,S,S1):-
     preposicion(S0,S1),
     lugares(_,S), !.
@@ -112,6 +119,8 @@ ubicacion(S0,S,S0):-
 
 
 %==================  CANTIDAD DE PERSONAS  ==================%
+
+% personas(Oración, Oración preliminar, Palabra(s) clave).
 
 personas(S0,S,S1):-
     preposicion(S0,[S1|_]),
@@ -132,6 +141,8 @@ personas(S0,S,S0):-
 
 %=======================  SINTAGMAS =========================%
 
+% sintagma_nominal(Género, Número, Estado, Oración preliminar, Oración,Palabra clave).
+%
 sintagma_nominal(Gen,Num,Estado,S0,S, S1):-
     determinante(Gen,Num,S0,S1),
     nombre(Gen,Num,Estado,S1,S2),
@@ -148,6 +159,9 @@ sintagma_nominal(Gen,Num,Estado,S0,S, S1):-
 sintagma_nominal(Gen,Num,Estado,S0,S, S0):-
     nombre(Gen,Num,Estado,S0,S).
 
+
+% sintagma_verbal(Género, Número, Estado, Oración preliminar, Oración,Palabra clave).
+
 sintagma_verbal(Num,_Estado,S0,S):-verbo(Num,S0,S).
 
 sintagma_verbal(Num,Estado,S0,S):-
@@ -156,15 +170,20 @@ sintagma_verbal(Num,Estado,S0,S):-
 
 %=======================  NOMINAL =========================%
 
+%determinante(Género, Número, Determinante, Oración).
 determinante(femenino, singular, [una|S],S).
 determinante(femenino, plural, [unas|S],S).
 determinante(masculino, singular, [un|S],S).
 determinante(masculino, plural, [unos|S],S).
 
+
+%pronombre(Número, Pronombre, Oración).
 pronombre(singular,[yo|S],S).
 
+%adjetivo(Género, Número, adjetivo, Oración).
 adjetivo(femenino,singular,[rápida|S],S).
 
+%nombre(Género, Número, Estado,  Nombre, Oración).
 nombre(masculino, singular, solido, [italiano|S],S).
 nombre(masculino, _, solido, [tacos|S],S).
 nombre(masculino, singular, solido, [calzone|S],S).
@@ -175,26 +194,33 @@ nombre(femenino, _, solido, [hamburguesas|S],S).
 nombre(femenino, singular, solido, [comida|S],S).
 nombre(femenino, singular, liquido, [bebida|S],S).
 
+%lugares(_, Oración). Admite cualquier lugar
 lugares([_|S],S).
 
+%person(personas, Oración).
 person([personas|S],S).
 
+%cantidad(_, Oración). Admite cualquier cantidad
 cantidad([_|S],S).
 
 %=======================  VERBAL =========================%
 
-
+% verbo(Número, Verbo, Oración).
 verbo(singular,[quiero|S],S).
 verbo(singular,[deseo|S],S).
+
+%infinitivo(Estado,  Infinitivo, Oración).
 infinitivo(solido, [comer|S],S).
 infinitivo(liquido, [tomar|S],S).
 
+%preposición(Preposición Oración).
 preposicion([en|S],S).
 preposicion([para|S],S).
 
 
 
 %=====================  PARSEAR INPUT =======================%
+
 
 %Caso base
 parseInput([],[]).
@@ -204,11 +230,12 @@ parseInput([C|InputList], [A|Result]):-
     atom_string(A,C),
     parseInput(InputList,Result).
 
-%Input es la entrada de texto del usuario
-%R será la entrada en formato analizable
+%Entradas: Input es la entrada de texto del usuario
+%Salidas: R será la entrada en formato analizable
 getInput(Input,R):-
     split_string(Input," ",".",R1),
     parseInput(R1,R).
+
 
 
 %======================  DELIMITANTES ========================%
@@ -235,7 +262,7 @@ validaralimento(Y, X):-
     %Ver si el tipo de comida que escribe coincide con el menú de algún restaurante
     Y == [italiano],
     %P será el lugar clave como string
-    write("¿Qué tipo de comida Italiana quiere comer"), nl,
+    write("¿Qué tipo de comida Italiana quiere comer?"), nl,
     read(T),
     getInput(T,Tparsed),
 
@@ -256,7 +283,7 @@ validaralimento([Y|_], X):-
 
 validaralimento(Y, X):-
     Y == [pizza],
-    write("Algún tipo de pizza especial?"),nl,
+    write("¿Algún tipo de pizza especial?"),nl,
     read(L),
 
     %Ver si el tipo de comida que escribe coincide con la lista de pizzas de algún    %restaurante
